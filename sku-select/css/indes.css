@@ -1,0 +1,58 @@
+p, ul, li, body {
+	margin: 0;
+	padding: 0;
+}
+
+#app {
+	width: 375px;
+	margin: 0 auto;
+}
+.sku {
+	padding-top: 100px;
+}
+.sku .row {
+	padding: 10px;
+	color: #333333;
+}
+.sku .label {
+	font-size: 16px;
+	font-weight: bold;
+}
+.sku .value-box {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: flex-start;
+	padding-top: 5px;
+}
+.sku .value {
+	color: #666666;
+	font-size: 14px;
+	text-align: center;
+	min-width: 60px;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 16px;
+	margin-right: 10px;
+	margin-bottom: 5px;
+	box-sizing: border-box;
+	border-radius: 4px;
+	border: 1px solid #eee;
+}
+/* 选中之后的样式 */
+.sku .value.active {
+	color: #f40;
+	border-color: #f40;
+}
+
+.sku-result {
+	color: #666666;
+	font-size: 14px;
+	padding-top: 12px;
+}
+/* .sku-result .sku-info {
+
+} */
+.sku-result .price {
+	color: #f40;
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./css/indes.css">
+	<title>Sku select</title>
+</head>
+<body>
+	<div id="app">
+		<div class="sku">
+			<!-- innerHTML ↓ -->
+			<div class="row">
+				<div class="label">颜色</div>
+				<div class="value-box">
+					<div class="value">白色</div>
+					<div class="value">红色</div>
+					<div class="value">黑色</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="sku-result" style="visibility: hidden;">
+			已选：<span class="sku-info">  </span> 价格：<span class="price">0</span>
+		</div>
+	</div>
+	
+	<script src="./js/data.js"></script>
+	<script src="./js/index.js"></script>
+</body>
+</html>
