@@ -1,0 +1,76 @@
+body {
+    margin: 0;
+}
+
+#app {
+    width: 600px;
+    padding-top: 100px;
+    margin: 0 auto;
+}
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 600px;
+}
+.list .item {
+    position: relative;
+    width: 130px;
+    margin-right: 20px;
+    /* padding: 0 10px; */
+    margin-bottom: 20px;
+}
+.list .cover {
+    width: 130px;
+    height: 130px;
+}
+.list .count {
+    position: absolute;
+    top: 130px;
+    transform: translateY(-100%);
+    width: 100%;
+    /* text-align: center; */
+    font-size: 16px;
+    line-height: 30px;
+    color: #fff;
+    padding: 0 10px;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.38);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.list .count .icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    background-image: url('../img/icon_headset.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+.list .count > span {
+    vertical-align: middle;
+}
+.list .name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    line-height: 20px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
+.more {
+    display: block;
+    width: 100px;
+    height: 40px;
+    line-height: 40px;
+    color: #666;
+    margin: 20px auto 0;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    background-color: #f8f8f8;
+}
