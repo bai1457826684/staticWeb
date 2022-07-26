@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 引入 vue2 cdn -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script> -->
+  <!-- 引入 axios cdn -->
+  <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+  <!-- 引入 jq cdn -->
+  <!-- <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script> -->
+  <!-- <script src="./js/jquery-2.1.1.min.js"></script> -->
+
+  <!-- <script src="https://unpkg.com/vue@next"></script> -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/3.2.33/vue.global.js"></script>
+  <script src="./js/flexible.js"></script>
+
+  <!-- vant css -->
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/vant@3/lib/index.css" />
+  <!-- vant js -->
+  <script src="https://fastly.jsdelivr.net/npm/vant@3/lib/vant.min.js"></script>
+
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/reset-vant.css">
+  <title>Mine Sweeping</title>
+</head>
+
+<body>
+  <div id="app">
+    <div class="control">
+      <van-cell-group inset>
+        <van-field v-model="formOptions.row" type="digit" label="行数" :disabled="gameStatus === 1"></van-field>
+        <van-field v-model="formOptions.col" type="digit" label="列数" :disabled="gameStatus === 1"></van-field>
+      </van-cell-group>
+
+      <div class="time_box">
+        <div class="time">Time: {{ startTime }}</div>
+        <van-button type="primary" @click="startGame">开始</van-button>
+      </div>
+    </div>
+
+    <div class="list_box">
+      <div class="row" v-for="(row, rowIndex) in mineList" :key="rowIndex">
+        <div class="col" v-for="(col, colIndex) in row" :key="colIndex">
+          <!-- 打开状态 -->
+          <template v-if="col.status === 1">
+            <div v-if="col.isThunder" class="thunder"></div>
+            <template v-else>{{ col.num || '' }}</template>
+          </template>
+          <!-- 未打开状态 -->
+          <template v-else>
+            <div class="mask" @click="openItem(rowIndex, colIndex)"></div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/index.js"></script>
+</body>
+
+</html>
