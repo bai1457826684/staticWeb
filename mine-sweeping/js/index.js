@@ -82,6 +82,8 @@ const Main = {
     const initGame = () => {
       state.openNum = 0;
       state.time = 0;
+      state.startTimeStamp = 0;
+      stopCountDown();
       // 生成雷区
       state.mineList = [];
       const { col, row } = state.options;
