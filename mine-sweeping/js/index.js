@@ -1,5 +1,5 @@
 const { ref, reactive, toRefs, onMounted, computed } = Vue;
-const { Field, CellGroup } = vant;
+const { Field, CellGroup, Toast } = vant;
 
 const Main = {
   setup() {
@@ -23,9 +23,9 @@ const Main = {
       // 0 未开始  1 进行中  2 失败  3 胜利
       gameStatus: 0,
       time: 0,
-
-      text: '',
-      tel: '',
+      startTimeStamp: 0, // 开始的时间戳
+      endTimeStamp: 0, // 结束时间戳
+      openNum: 0,
     });
 
     onMounted(() => {
@@ -38,12 +38,16 @@ const Main = {
       return `${second} S`;
     });
 
+    // 剩余数量
+    const remainingNum = computed(() => {
+      const { row, col, boom } = state.options;
+      return row * col - state.openNum - boom;
+    });
+
     // 开始游戏
     const startGame = () => {
-      state.options.row = Number(state.formOptions.row);
-      state.options.col = Number(state.formOptions.col);
-      state.options.boom = Number(state.formOptions.boom);
-      state.options.second = Number(state.formOptions.second);
+      // 设置配置
+      if (!setOptions()) return;
       // 初始化游戏数据
       initGame();
       setGameStatus(1);
@@ -51,9 +55,34 @@ const Main = {
       generateThunder();
     };
 
+    // 设置配置
+    const setOptions = () => {
+      const { row, col, boom, second } = state.formOptions;
+      // 校验配置
+      if (col < 1 || row < 1) {
+        Toast('行数，列数不能小于1');
+        return false;
+      }
+      if (boom < 1) {
+        Toast('炸弹数不能小于1');
+        return false;
+      }
+      if (row * col >= 2000) {
+        Toast('设置行数列数过大');
+        return false;
+      }
+      state.options.row = Number(row);
+      state.options.col = Number(col);
+      state.options.boom = Number(boom);
+      state.options.second = Number(second);
+      return true;
+    };
+
     // 初始化游戏数据
     const initGame = () => {
-      openNum = 0;
+      state.openNum = 0;
+      state.time = 0;
+      // 生成雷区
       state.mineList = [];
       const { col, row } = state.options;
       // Array fill方法填充的会有引用问题
@@ -102,54 +131,104 @@ const Main = {
 
     // 计时
     let timer = null;
-    let startTimeStamp = 0; // 开始的时间戳
     const setCountDown = () => {
-      startTimeStamp = Date.now();
+      state.startTimeStamp = Date.now();
       state.time = 0;
       timer = setInterval(() => {
-        state.time = Date.now() - startTimeStamp;
-        console.log(state.time);
+        state.time = Date.now() - state.startTimeStamp;
       }, 500);
     };
 
     // 停止计时
     const stopCountDown = () => {
       clearInterval(timer);
+      state.endTimeStamp = Date.now();
     };
 
     // 打开
-    let openNum = 0;
-    const openItem = (rowIndex, colIndex) => {
-      if (openNum === 0) {
+    const clickItem = (rowIndex, colIndex) => {
+      if (state.openNum === 0) {
         // 开始计时
         setCountDown();
       }
       if (state.gameStatus !== 1) return;
       const item = state.mineList[rowIndex][colIndex];
+      if (item.status === 1) return;
       item.status = 1;
-      openNum++;
+      state.openNum++;
       if (item.isThunder) {
         setGameStatus(2);
         return;
       }
       if (item.num === 0) {
+        setNearbyStatus(rowIndex, colIndex);
       }
       // 检查游戏状态
       checkGameStatus();
     };
 
+    const setNearbyStatus = (rowIndex, colIndex) => {
+      const list = getNearbyIndex(rowIndex, colIndex);
+      // console.log('status');
+      list.forEach(({ rowIndex, colIndex }) => {
+        // clickItem(rowIndex, colIndex);
+        const item = state.mineList[rowIndex][colIndex];
+        item.status = 1;
+        state.openNum++;
+      });
+
+      list.forEach(({ rowIndex, colIndex }) => {
+        const item = state.mineList[rowIndex][colIndex];
+        if (item.num === 0) {
+          setNearbyStatus(rowIndex, colIndex);
+        }
+      });
+    };
+
     /**
-     * 获取附近8个有效的雷区索引
+     * 获取附近8个未开启的雷区索引
      * @param {Number} rowIndex
      * @param {Number} colIndex
+     * @return {Array} 索引列表
      */
     const getNearbyIndex = (rowIndex, colIndex) => {
+      // console.log('x, y', rowIndex, colIndex);
       const res = [];
-      if (rowIndex - 1 > 0) {
-        // res.push({
-        //   rowIndex: 
-        // })
-      }
+
+      const filterOpenStatus = (rowIndex, colIndex) => {
+        let res = null;
+        if (state.mineList[rowIndex] && state.mineList[rowIndex][colIndex]) {
+          res = state.mineList[rowIndex][colIndex].status === 0 ? { rowIndex, colIndex } : null;
+        }
+        return res;
+      };
+
+      let item = null;
+      // 左 上
+      item = filterOpenStatus(rowIndex - 1, colIndex - 1);
+      item ? res.push(item) : '';
+      // 中 上
+      item = filterOpenStatus(rowIndex - 1, colIndex);
+      item ? res.push(item) : '';
+      // 右 上
+      item = filterOpenStatus(rowIndex - 1, colIndex + 1);
+      item ? res.push(item) : '';
+      // 左 中
+      item = filterOpenStatus(rowIndex, colIndex - 1);
+      item ? res.push(item) : '';
+      // 右 中
+      item = filterOpenStatus(rowIndex, colIndex + 1);
+      item ? res.push(item) : '';
+      // 左 下
+      item = filterOpenStatus(rowIndex + 1, colIndex - 1);
+      item ? res.push(item) : '';
+      // 中 下
+      item = filterOpenStatus(rowIndex + 1, colIndex);
+      item ? res.push(item) : '';
+      // 右 下
+      item = filterOpenStatus(rowIndex + 1, colIndex + 1);
+      item ? res.push(item) : '';
+
       return res;
     };
 
@@ -179,7 +258,7 @@ const Main = {
     // 检查游戏状态
     const checkGameStatus = () => {
       const { boom, row, col } = state.options;
-      if (openNum + boom === row * col) {
+      if (state.openNum + boom === row * col) {
         // 已全部打开，游戏胜利
         setGameStatus(3);
       }
@@ -187,9 +266,10 @@ const Main = {
 
     return {
       ...toRefs(state),
-      openItem,
+      clickItem,
       startGame,
       startTime,
+      remainingNum,
     };
   },
 };
