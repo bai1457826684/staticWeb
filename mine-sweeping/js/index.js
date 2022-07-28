@@ -44,6 +44,19 @@ const Main = {
       return row * col - state.openNum - boom;
     });
 
+    // 旗帜数量
+    const flagCount = computed(() => {
+      let count = 0;
+      state.mineList.forEach((col) => {
+        col.forEach((item) => {
+          if (item.status === 3) {
+            count++;
+          }
+        });
+      });
+      return count;
+    });
+
     // 开始游戏
     const startGame = () => {
       // 设置配置
@@ -147,15 +160,43 @@ const Main = {
       state.endTimeStamp = Date.now();
     };
 
+    document.oncontextmenu = function (e) {
+      return false;
+      //或者 e.preventDefault()
+    };
+
+    // 右键
+    const onMouseUp = (e, rowIndex, colIndex) => {
+      if (e.button == 2) {
+        console.log('右键');
+        const item = state.mineList[rowIndex][colIndex];
+        switch (item.status) {
+          case 0:
+            item.status = 3;
+            break;
+          case 2:
+            item.status = 0;
+            break;
+          case 3:
+            item.status = 2;
+            break;
+
+          default:
+            break;
+        }
+      }
+    };
+
     // 打开
     const clickItem = (rowIndex, colIndex) => {
+      if (state.gameStatus !== 1) return;
+      const item = state.mineList[rowIndex][colIndex];
+      // 不是未打开状态的就不能点击
+      if (item.status !== 0) return;
       if (state.openNum === 0) {
         // 开始计时
         setCountDown();
       }
-      if (state.gameStatus !== 1) return;
-      const item = state.mineList[rowIndex][colIndex];
-      if (item.status === 1) return;
       item.status = 1;
       state.openNum++;
       if (item.isThunder) {
@@ -243,12 +284,12 @@ const Main = {
       switch (status) {
         case 2:
           // 失败
-          vant.Toast('Game over');
+          Toast('Game over');
           stopCountDown();
           break;
         case 3:
           // 胜利
-          vant.Toast('Victory');
+          Toast('Victory');
           stopCountDown();
           break;
 
@@ -271,7 +312,9 @@ const Main = {
       clickItem,
       startGame,
       startTime,
+      flagCount,
       remainingNum,
+      onMouseUp,
     };
   },
 };

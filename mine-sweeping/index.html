@@ -37,8 +37,9 @@
       </van-cell-group>
 
       <div class="time_box">
-        <div class="time">Time: {{ startTime }}</div>
-        <div>剩余数量：{{ remainingNum }}</div>
+        <div class="time">Time:{{ startTime }}</div>
+        <div>剩余数量:{{ remainingNum }}</div>
+        <div>插旗数量:{{ flagCount }}</div>
         <van-button type="primary" @click="startGame">开始</van-button>
       </div>
     </div>
@@ -53,7 +54,12 @@
           </template>
           <!-- 未打开状态 -->
           <template v-else>
-            <div class="mask" @click="clickItem(rowIndex, colIndex)"></div>
+            <div class="mask" @click="clickItem(rowIndex, colIndex)" @contextmenu.prevent="onMouseUp($event, rowIndex, colIndex)">
+              <!-- 插旗 -->
+              <img v-show="col.status === 3" src="./img/icon_flag.png" alt="">
+              <!-- 问号 -->
+              <img v-show="col.status === 2" src="./img/icon_question.png" alt="">
+            </div>
           </template>
         </div>
       </div>
