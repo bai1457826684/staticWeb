@@ -168,7 +168,6 @@ const Main = {
     // 右键
     const onMouseUp = (e, rowIndex, colIndex) => {
       if (e.button == 2) {
-        console.log('右键');
         const item = state.mineList[rowIndex][colIndex];
         switch (item.status) {
           case 0:
